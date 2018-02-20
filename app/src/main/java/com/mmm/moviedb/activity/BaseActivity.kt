@@ -9,7 +9,7 @@ import android.widget.TextView
 import com.mmm.moviedb.R
 
 /**
- * Created by Mirudhula on 2/19/2018.
+ * Created by Thirumoorthy on 2/19/2018.
  */
 abstract class BaseActivity : AppCompatActivity() {
 

@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 
 
 /**
- * Created by Mirudhula on 2/19/2018.
+ * Created by Thirumoorthy on 2/19/2018.
  */
 
 data class Details(

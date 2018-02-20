@@ -7,7 +7,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
- * Created by Mirudhula on 2/19/2018.
+ * Created by Thirumoorthy on 2/19/2018.
  */
 interface RestApi {
 

@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 /**
- * Created by Mirudhula on 2/19/2018.
+ * Created by Thirumoorthy on 2/19/2018.
  */
 data class Movie(@SerializedName("page")
                   @Expose val page:Int,
@@ -18,8 +18,7 @@ data class Movie(@SerializedName("page")
 
 
 data class Result(@SerializedName("vote_count")
-                  @Expose
-                  private val voteCount: Int,
+                  @Expose val voteCount: Int,
                   @SerializedName("id")
                     @Expose val id: Int,
                     @SerializedName("video")

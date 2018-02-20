@@ -15,12 +15,21 @@ import android.text.TextUtils
 import android.speech.RecognizerIntent
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import android.content.Intent
+import android.support.v7.widget.GridLayoutManager
+import com.mmm.moviedb.adapter.MovieListAdapter
 import kotlinx.android.synthetic.main.base_tool_bar.*
+import kotlinx.android.synthetic.main.content_home.*
+
 class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+
     override fun setLayout()=R.layout.activity_home
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        movieList.setHasFixedSize(true)
+        movieList.layoutManager = GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false)
+        movieList.adapter = MovieListAdapter()
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
