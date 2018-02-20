@@ -1,10 +1,14 @@
 package com.mmm.moviedb.adapter
 
+import android.content.Intent
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mmm.moviedb.R
+import com.mmm.moviedb.activity.MovieDetailsActivity
+import com.mmm.moviedb.base.Config
 import com.mmm.moviedb.model.Result
 
 import kotlinx.android.synthetic.main.movie_item_view.view.*
@@ -25,7 +29,7 @@ class MovieListAdapter: RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
             holder.bind(value)
     }
 
-    override fun getItemCount() = 10//movieResult.size
+    override fun getItemCount() = movieResult.size
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.movie_item_view, parent,false))
@@ -33,7 +37,12 @@ class MovieListAdapter: RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(result: Result){
-            itemView.voteCount.text = "${result.voteCount}"
+            itemView.movieImage.setImageURI(Uri.parse(Config.IMAGE_BASE_URL+result.posterPath),null)
+            itemView.setOnClickListener {
+                val intent = Intent(itemView.context,MovieDetailsActivity::class.java)
+                intent.putExtra("DERAILS",result)
+                itemView.context.startActivity(intent)
+            }
         }
     }
 }

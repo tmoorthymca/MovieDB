@@ -16,25 +16,35 @@ import android.speech.RecognizerIntent
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import android.content.Intent
 import android.support.v7.widget.GridLayoutManager
+import android.util.Log
+import com.mmm.moviedb.BuildConfig
 import com.mmm.moviedb.adapter.MovieListAdapter
+import com.mmm.moviedb.base.Config
+import com.mmm.moviedb.base.ProgressDialog
+import com.mmm.moviedb.model.Movie
+import com.mmm.moviedb.presenter.HomePresenter
 import kotlinx.android.synthetic.main.base_tool_bar.*
 import kotlinx.android.synthetic.main.content_home.*
 
 class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     override fun setLayout()=R.layout.activity_home
+    private lateinit var presenter: HomePresenter
+    private lateinit var adapter:MovieListAdapter
+    private lateinit var progressDialog:ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        progressDialog = ProgressDialog(this,android.R.style.Theme_Translucent_NoTitleBar)
+
         movieList.setHasFixedSize(true)
         movieList.layoutManager = GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false)
-        movieList.adapter = MovieListAdapter()
+        adapter = MovieListAdapter()
+        movieList.adapter = adapter
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+        presenter = HomePresenter(this)
+
         searchView.setVoiceSearch(false)
         searchView.setEllipsize(true);
         searchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
@@ -43,15 +53,21 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                return false
-            }
-        })
-
-        searchView.setOnSearchViewListener(object : MaterialSearchView.SearchViewListener {
-            override fun onSearchViewShown() {
-            }
-
-            override fun onSearchViewClosed() {
+                if(newText.length>=3) {
+                    presenter.getSearchResult(newText)
+                            .subscribe({
+                                adapter.addData(it.results)
+                                if (BuildConfig.DEBUG) {
+                                    Log.v("@@@@", it.toString())
+                                }
+                            },
+                                    {
+                                        if (BuildConfig.DEBUG) {
+                                            it.printStackTrace()
+                                        }
+                                    })
+                }
+                return true
             }
         })
 
@@ -61,21 +77,15 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-    }
+        nav_view.getMenu().getItem(0).setChecked(true);
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == Activity.RESULT_OK) {
-            val matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            if (matches != null && matches.size > 0) {
-                val searchWrd = matches[0]
-                if (!TextUtils.isEmpty(searchWrd)) {
-                    searchView.setQuery(searchWrd, false)
-                }
-            }
-
-            return
-        }
-        super.onActivityResult(requestCode, resultCode, data)
+        progressDialog.show()
+        presenter.compositeDisposable.add(presenter.getNowPlayingMovies()
+                .subscribe({
+                    setAdapterData(it)
+                },{
+                    Config.retrofitErrorResponse(this,it)
+                }))
     }
 
     override fun onBackPressed() {
@@ -102,14 +112,70 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_popular-> {
+            R.id.nav_now_playing-> {
+                if(!item.isChecked && item.itemId == R.id.nav_now_playing) {
+                    progressDialog.show()
+                    presenter.compositeDisposable.add(presenter.getNowPlayingMovies()
+                            .subscribe({
+                                setAdapterData(it)
+                            }, {
+                                progressDialog.dismiss()
+                                Config.retrofitErrorResponse(this, it)
+                            }))
+                }
             }
             R.id.nav_top -> {
-
+                if(!item.isChecked && item.itemId == R.id.nav_top) {
+                    progressDialog.show()
+                    presenter.compositeDisposable.add(presenter.getTopMovies()
+                            .subscribe({
+                                setAdapterData(it)
+                            }, {
+                                progressDialog.dismiss()
+                                Config.retrofitErrorResponse(this, it)
+                            }))
+                }
+            }
+            R.id.nav_popular-> {
+                if(!item.isChecked && item.itemId == R.id.nav_popular) {
+                    progressDialog.show()
+                    presenter.compositeDisposable.add(presenter.getPopularMovies()
+                            .subscribe({
+                                setAdapterData(it)
+                            }, {
+                                progressDialog.dismiss()
+                                Config.retrofitErrorResponse(this, it)
+                            }))
+                }
+            }
+            R.id.nav_upcoming -> {
+                if(!item.isChecked && item.itemId == R.id.nav_upcoming) {
+                    progressDialog.show()
+                    presenter.compositeDisposable.add(presenter.getUpcomingMovies()
+                            .subscribe({
+                                setAdapterData(it)
+                            }, {
+                                progressDialog.dismiss()
+                                Config.retrofitErrorResponse(this, it)
+                            }))
+                }
             }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    fun setAdapterData(movie:Movie){
+        progressDialog.dismiss()
+        val results = movie.results
+        if(!results.isEmpty()){
+            adapter.addData(results)
+        }
+    }
+
+    override fun onDestroy() {
+        presenter.onDestroy()
+        super.onDestroy()
     }
 }

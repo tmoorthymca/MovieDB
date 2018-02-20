@@ -2,6 +2,7 @@ package com.mmm.moviedb.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 /**
  * Created by Thirumoorthy on 2/19/2018.
@@ -24,13 +25,13 @@ data class Result(@SerializedName("vote_count")
                     @SerializedName("video")
                     @Expose val video: Boolean,
                     @SerializedName("vote_average")
-                    @Expose val voteAverage: Int,
+                    @Expose val voteAverage: Double,
                     @SerializedName("title")
                     @Expose val title: String,
                     @SerializedName("popularity")
                     @Expose val popularity: Double,
                     @SerializedName("poster_path")
-                    @Expose val posterPath: Any,
+                    @Expose val posterPath: String,
                     @SerializedName("original_language")
                     @Expose val originalLanguage: String,
                     @SerializedName("original_title")
@@ -38,10 +39,10 @@ data class Result(@SerializedName("vote_count")
                     @SerializedName("genre_ids")
                     @Expose val genreIds: List<Int>,
                     @SerializedName("backdrop_path")
-                    @Expose val backdropPath: Any,
+                    @Expose val backdropPath: String,
                     @SerializedName("adult")
                     @Expose val adult: Boolean,
                     @SerializedName("overview")
                     @Expose val overview: String,
                     @SerializedName("release_date")
-                    @Expose val releaseDate: String)
+                    @Expose val releaseDate: String):Serializable

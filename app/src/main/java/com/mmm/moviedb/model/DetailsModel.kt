@@ -14,10 +14,8 @@ data class Details(
     @Expose val adult: Boolean ,
     @SerializedName("backdrop_path")
     @Expose val backdropPath: String ,
-    @SerializedName("belongs_to_collection")
-    @Expose val belongsToCollection: Any ,
     @SerializedName("budget")
-    @Expose val budget: Int ,
+    @Expose val budget: Long ,
     @SerializedName("genres")
     @Expose val genres: List<Genre> ,
     @SerializedName("homepage")
@@ -35,7 +33,7 @@ data class Details(
     @SerializedName("popularity")
     @Expose val popularity: Double ,
     @SerializedName("poster_path")
-    @Expose val posterPath: Any ,
+    @Expose val posterPath: String ,
     @SerializedName("production_companies")
     @Expose val productionCompanies: List<ProductionCompany> ,
     @SerializedName("production_countries")
