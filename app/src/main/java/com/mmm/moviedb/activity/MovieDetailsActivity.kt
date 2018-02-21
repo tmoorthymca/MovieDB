@@ -27,6 +27,7 @@ class MovieDetailsActivity : BaseActivity() {
         presenter = DetailsPresenter(this)
 
         imageView.setImageURI(Uri.parse(Config.IMAGE_BASE_URL+result.backdropPath),null)
+        title = result.originalTitle
 
         progressDialog.show()
         presenter.compositeDisposable.add(presenter.getMovieDetails(result.id)
