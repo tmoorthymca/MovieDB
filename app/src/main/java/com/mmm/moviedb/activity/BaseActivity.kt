@@ -41,13 +41,4 @@ abstract class BaseActivity : AppCompatActivity() {
             else -> return super.onOptionsItemSelected(item)
         }
     }
-
-    fun replaceFragment(containerID: Int, fragment: Fragment, canBack: Boolean) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(containerID, fragment, fragment.javaClass.simpleName)
-        if (canBack) {
-            fragmentTransaction.addToBackStack(null)
-        }
-        fragmentTransaction.commit()
-    }
 }

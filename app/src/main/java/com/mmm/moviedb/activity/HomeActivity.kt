@@ -1,5 +1,7 @@
 package com.mmm.moviedb.activity
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -15,6 +17,9 @@ import android.text.TextUtils
 import android.speech.RecognizerIntent
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
 import com.mmm.moviedb.BuildConfig
@@ -78,14 +83,7 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         nav_view.setNavigationItemSelectedListener(this)
         nav_view.getMenu().getItem(0).setChecked(true);
-
-        progressDialog.show()
-        presenter.compositeDisposable.add(presenter.getNowPlayingMovies()
-                .subscribe({
-                    setAdapterData(it)
-                },{
-                    Config.retrofitErrorResponse(this,it)
-                }))
+        landingService()
     }
 
     override fun onBackPressed() {
@@ -114,14 +112,7 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         when (item.itemId) {
             R.id.nav_now_playing-> {
                 if(!item.isChecked && item.itemId == R.id.nav_now_playing) {
-                    progressDialog.show()
-                    presenter.compositeDisposable.add(presenter.getNowPlayingMovies()
-                            .subscribe({
-                                setAdapterData(it)
-                            }, {
-                                progressDialog.dismiss()
-                                Config.retrofitErrorResponse(this, it)
-                            }))
+                    landingService()
                 }
             }
             R.id.nav_top -> {
@@ -174,8 +165,19 @@ class HomeActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+    fun landingService(){
+        progressDialog.show()
+        presenter.compositeDisposable.add(presenter.getNowPlayingMovies()
+                .subscribe({
+                    setAdapterData(it)
+                },{
+                    Config.retrofitErrorResponse(this,it)
+                }))
+    }
+
     override fun onDestroy() {
         presenter.onDestroy()
         super.onDestroy()
     }
+
 }
