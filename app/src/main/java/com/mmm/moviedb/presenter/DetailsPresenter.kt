@@ -8,7 +8,7 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
- * Created by Mirudhula on 2/20/2018.
+ * Created by Thirumoorthy on 2/20/2018.
  */
 class DetailsPresenter(context: Context) : BasePresenter() {
     @Inject

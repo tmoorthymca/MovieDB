@@ -6,7 +6,7 @@ import android.view.WindowManager
 import com.mmm.moviedb.R
 
 /**
- * Created by Mirudhula on 2/20/2018.
+ * Created by Thirumoorthy on 2/20/2018.
  */
 class ProgressDialog(context: Context,style:Int) : Dialog(context,style) {
     init {

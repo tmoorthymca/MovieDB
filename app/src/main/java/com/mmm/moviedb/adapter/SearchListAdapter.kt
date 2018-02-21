@@ -13,7 +13,7 @@ import java.util.ArrayList
 import kotlinx.android.synthetic.main.search_result_view.view.*
 
 /**
- * Created by Mirudhula on 2/20/2018.
+ * Created by Thirumoorthy on 2/20/2018.
  */
 class SearchListAdapter(context: Context,results:List<Result>) : BaseAdapter() {
 
