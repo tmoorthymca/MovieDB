@@ -1,0 +1,6 @@
+# Global
+-keepattributes Signature
+
+# Models
+-keepclasseswithmembers com.mithran.tm_base_library.model.** { *; }
+-keepclasseswithmembernames class com.mithran.tm_base_library.model.** { *; }

@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MovieDB.iml" filepath="$PROJECT_DIR$/MovieDB.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/MovieDB.iml" filepath="$PROJECT_DIR$/.idea/MovieDB.iml" />
+      <module fileurl="file://E:\Android Dev\Project\MovieDB\MovieDB.iml" filepath="E:\Android Dev\Project\MovieDB\MovieDB.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://E:\Android Dev\Project\MovieDB\app\app.iml" filepath="E:\Android Dev\Project\MovieDB\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/tm_base_library/tm_base_library.iml" filepath="$PROJECT_DIR$/tm_base_library/tm_base_library.iml" />
+      <module fileurl="file://E:\Android Dev\Project\MovieDB\tm_base_library\tm_base_library.iml" filepath="E:\Android Dev\Project\MovieDB\tm_base_library\tm_base_library.iml" />
     </modules>
   </component>
 </project>
