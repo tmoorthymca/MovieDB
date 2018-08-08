@@ -34,17 +34,53 @@ public class RetrofitManager {
 
     private Context mContext;
 
-    private Retrofit.Builder mRetrofit, mCachedRetrofit;
+    private Retrofit.Builder mRetrofit;
 
     private Cache mCache;
-    private OkHttpClient mOkHttpClient, mCachedOkHttpClient;
+    private OkHttpClient mOkHttpClient,mServerWithCachedOkHttpClient,mCachedOkHttpClient;
+
+    public static int FROM_SERVER = 1;
+    public static int FROM_CACHE = 2;
+    public static int FROM_SERVER_FIRST_CACHE_NEXT = 3;
 
     public RetrofitManager(Context context) {
         mContext = context;
     }
 
-    public Retrofit getRetrofit(String baseUrl) {
+    public Retrofit apiCall(String baseUrl,int type){
         if (mRetrofit == null) {
+            mRetrofit = new Retrofit.Builder()
+                    .addConverterFactory(GsonConverterFactory.create(new Gson()))
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
+        }
+
+        if(type == FROM_SERVER){
+            mRetrofit.client(okHttpClient());
+        }else if(type == FROM_CACHE){
+            mRetrofit.client(cachedOkHttpClient());
+        }else if(type == FROM_SERVER_FIRST_CACHE_NEXT){
+            mRetrofit.client(serverFirstCachedNextOkHttpClient());
+        }
+
+        if (!TextUtils.isEmpty(baseUrl)) {
+            mRetrofit.baseUrl(baseUrl);
+        } else {
+            mRetrofit.baseUrl(BASE_URL);
+        }
+        return mRetrofit.build();
+    }
+
+    private OkHttpClient okHttpClient() {
+        if (mOkHttpClient == null) {
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                    .addInterceptor(provideHttpLoggingInterceptor());
+            mOkHttpClient = httpClient.build();
+        }
+        return mOkHttpClient;
+    }
+
+    private OkHttpClient serverFirstCachedNextOkHttpClient() {
+        if (mServerWithCachedOkHttpClient == null) {
             // Add all interceptors you want (headers, URL, logging)
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
                     .addInterceptor(provideOfflineCacheInterceptor())
@@ -52,23 +88,13 @@ public class RetrofitManager {
                     .addInterceptor(provideHttpLoggingInterceptor())
                     .cache(provideCache());
 
-            mOkHttpClient = httpClient.build();
-            mRetrofit = new Retrofit.Builder()
-                    .addConverterFactory(GsonConverterFactory.create(new Gson()))
-                    // Add your adapter factory to handler Errors
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .client(mOkHttpClient);
+            mServerWithCachedOkHttpClient = httpClient.build();
         }
-        if(TextUtils.isEmpty(baseUrl)) {
-            mRetrofit.baseUrl(BASE_URL);
-        }else{
-            mRetrofit.baseUrl(baseUrl);
-        }
-        return mRetrofit.build();
+        return mServerWithCachedOkHttpClient;
     }
 
-    public Retrofit getCachedRetrofit(String baseUrl) {
-        if (mCachedRetrofit == null) {
+    private OkHttpClient cachedOkHttpClient() {
+        if (mCachedOkHttpClient == null) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
                     // Add all interceptors you want (headers, URL, logging)
                     .addInterceptor(provideHttpLoggingInterceptor())
@@ -76,18 +102,8 @@ public class RetrofitManager {
                     .cache(provideCache());
 
             mCachedOkHttpClient = httpClient.build();
-
-            mCachedRetrofit = new Retrofit.Builder()
-                    .addConverterFactory(GsonConverterFactory.create(new Gson()))
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .client(mCachedOkHttpClient);
         }
-        if(TextUtils.isEmpty(baseUrl)) {
-            mCachedRetrofit.baseUrl(BASE_URL);
-        }else{
-            mCachedRetrofit.baseUrl(baseUrl);
-        }
-        return mCachedRetrofit.build();
+        return mCachedOkHttpClient;
     }
 
     private Cache provideCache() {
@@ -99,7 +115,6 @@ public class RetrofitManager {
                 Log.e(TAG, "Could not create Cache!");
             }
         }
-
         return mCache;
     }
 
@@ -154,6 +169,8 @@ public class RetrofitManager {
         };
     }
 
+    //private Interceptor ProvideServerFirst
+
     private Interceptor provideForcedOfflineCacheInterceptor() {
         return new Interceptor() {
             @Override
@@ -186,9 +203,12 @@ public class RetrofitManager {
             mCachedOkHttpClient.dispatcher().cancelAll();
         }
 
-        mRetrofit = null;
-        mCachedRetrofit = null;
+        if (mServerWithCachedOkHttpClient != null) {
+            // Cancel Pending Cached Request
+            mServerWithCachedOkHttpClient.dispatcher().cancelAll();
+        }
 
+        mRetrofit = null;
         if (mCache != null) {
             try {
                 mCache.evictAll();

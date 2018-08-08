@@ -17,11 +17,12 @@ import retrofit2.http.Query;
 
 public class Service {
 
-    private IExampleNetwork mIExampleNetwork, mICachedExampleNetwork;
+    private IExampleNetwork mIExampleNetwork, mICachedExampleNetwork, mIServerCachedExampleNetwork;
 
     public Service(RetrofitManager retrofitManager) {
-        mIExampleNetwork = retrofitManager.getRetrofit(null).create(IExampleNetwork.class);
-        mICachedExampleNetwork = retrofitManager.getCachedRetrofit(null).create(IExampleNetwork.class);
+        mIExampleNetwork = retrofitManager.apiCall(null,RetrofitManager.FROM_SERVER).create(IExampleNetwork.class);
+        mICachedExampleNetwork = retrofitManager.apiCall(null,RetrofitManager.FROM_CACHE).create(IExampleNetwork.class);
+        mIServerCachedExampleNetwork = retrofitManager.apiCall(null,RetrofitManager.FROM_SERVER_FIRST_CACHE_NEXT).create(IExampleNetwork.class);
     }
 
     interface IExampleNetwork {
@@ -33,9 +34,21 @@ public class Service {
         return mIExampleNetwork.getDetails(id);
     }*/
 
+    public Single<String> getServerDetails() {
+        Map<String,String> map = new HashMap();
+        map.put("Test","Test");
+        return mIExampleNetwork.getUpcomingMovie(RetrofitManager.API_KEY,"En",1);
+    }
+
     public Single<String> getCachedDetails() {
         Map<String,String> map = new HashMap();
         map.put("Test","Test");
         return mICachedExampleNetwork.getUpcomingMovie(RetrofitManager.API_KEY,"En",1);
+    }
+
+    public Single<String> getServerCachedDetails() {
+        Map<String,String> map = new HashMap();
+        map.put("Test","Test");
+        return mIServerCachedExampleNetwork.getUpcomingMovie(RetrofitManager.API_KEY,"En",1);
     }
 }
