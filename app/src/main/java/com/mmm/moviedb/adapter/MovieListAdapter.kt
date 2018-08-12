@@ -17,6 +17,10 @@ import kotlinx.android.synthetic.main.movie_item_view.view.*
  * Created by Thirumoorthy on 2/19/2018.
  */
 class MovieListAdapter: RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.movie_item_view, parent,false))
+    }
+
     var movieResult:List<Result> = ArrayList<Result>()
 
     fun addData(movieResult:List<Result>){
@@ -31,9 +35,9 @@ class MovieListAdapter: RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
 
     override fun getItemCount() = movieResult.size
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+    /*override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.movie_item_view, parent,false))
-    }
+    }*/
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(result: Result){

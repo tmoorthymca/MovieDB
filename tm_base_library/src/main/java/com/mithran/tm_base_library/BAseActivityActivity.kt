@@ -13,21 +13,24 @@ class BAseActivityActivity : AppCompatActivity() {
         setContentView(R.layout.activity_base_activity)
 
         serverBtn.setOnClickListener {
-            Service(RetrofitManager(this)).getServerDetails()
+            RetrofitManager.apiCallFromServer(this,Service.IExampleNetwork::class.java)
+                    .getUpcomingMovie(RetrofitManager.API_KEY,"En",1)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({},{})
         }
 
         servercacheBtn.setOnClickListener {
-            Service(RetrofitManager(this)).getServerCachedDetails()
+            RetrofitManager.apiCallFromCache(this,Service.IExampleNetwork::class.java)
+                    .getUpcomingMovie(RetrofitManager.API_KEY,"En",1)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({},{})
         }
 
         cacheBtn.setOnClickListener {
-            Service(RetrofitManager(this)).getCachedDetails()
+            RetrofitManager.apiCallFromServerOrCache(this,Service.IExampleNetwork::class.java)
+                    .getUpcomingMovie(RetrofitManager.API_KEY,"En",1)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({},{})

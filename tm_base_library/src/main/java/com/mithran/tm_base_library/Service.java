@@ -17,13 +17,13 @@ import retrofit2.http.Query;
 
 public class Service {
 
-    private IExampleNetwork mIExampleNetwork, mICachedExampleNetwork, mIServerCachedExampleNetwork;
+    /*private IExampleNetwork mIExampleNetwork, mICachedExampleNetwork, mIServerCachedExampleNetwork;
 
     public Service(RetrofitManager retrofitManager) {
         mIExampleNetwork = retrofitManager.apiCall(null,RetrofitManager.FROM_SERVER).create(IExampleNetwork.class);
         mICachedExampleNetwork = retrofitManager.apiCall(null,RetrofitManager.FROM_CACHE).create(IExampleNetwork.class);
         mIServerCachedExampleNetwork = retrofitManager.apiCall(null,RetrofitManager.FROM_SERVER_FIRST_CACHE_NEXT).create(IExampleNetwork.class);
-    }
+    }*/
 
     interface IExampleNetwork {
         @GET("movie/upcoming")
@@ -34,7 +34,7 @@ public class Service {
         return mIExampleNetwork.getDetails(id);
     }*/
 
-    public Single<String> getServerDetails() {
+    /*public Single<String> getServerDetails() {
         Map<String,String> map = new HashMap();
         map.put("Test","Test");
         return mIExampleNetwork.getUpcomingMovie(RetrofitManager.API_KEY,"En",1);
@@ -50,5 +50,5 @@ public class Service {
         Map<String,String> map = new HashMap();
         map.put("Test","Test");
         return mIServerCachedExampleNetwork.getUpcomingMovie(RetrofitManager.API_KEY,"En",1);
-    }
+    }*/
 }

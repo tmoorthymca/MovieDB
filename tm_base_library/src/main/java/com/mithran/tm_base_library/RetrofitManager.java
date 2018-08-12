@@ -24,13 +24,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static okhttp3.logging.HttpLoggingInterceptor.Level.BODY;
 
-public class RetrofitManager {
+public class RetrofitManager<T> {
     public static final String TAG = "RetrofitManager";
 
     public static final String BASE_URL = "https://api.themoviedb.org/3/";
     public static String API_KEY = "7085aa44d49e3fca2114530e37f88055";
     public static final String HEADER_CACHE_CONTROL = "Cache-Control";
     public static final String HEADER_PRAGMA = "Pragma";
+
+    private T service = null;
+    private T serviceCache = null;
+    private T serviceOrCache = null;
 
     private Context mContext;
 
@@ -42,6 +46,15 @@ public class RetrofitManager {
     public static int FROM_SERVER = 1;
     public static int FROM_CACHE = 2;
     public static int FROM_SERVER_FIRST_CACHE_NEXT = 3;
+
+    private static RetrofitManager retrofitManager;
+
+    public static RetrofitManager getInstant(Context context){
+        if(retrofitManager == null){
+            retrofitManager = new RetrofitManager(context);
+        }
+        return retrofitManager;
+    }
 
     public RetrofitManager(Context context) {
         mContext = context;
@@ -244,6 +257,27 @@ public class RetrofitManager {
         }
 
         return false;
+    }
+
+    public static <T> T apiCallFromServer(Context context, final Class<T> service){
+        if(RetrofitManager.getInstant(context).service == null) {
+            RetrofitManager.getInstant(context).service =RetrofitManager.getInstant(context).apiCall(RetrofitManager.BASE_URL,RetrofitManager.FROM_SERVER).create(service);
+        }
+        return (T) RetrofitManager.getInstant(context).service;
+    }
+
+    public static <T> T apiCallFromCache(Context context, final Class<T> service){
+        if(RetrofitManager.getInstant(context).serviceCache == null) {
+            RetrofitManager.getInstant(context).serviceCache =RetrofitManager.getInstant(context).apiCall(RetrofitManager.BASE_URL,RetrofitManager.FROM_CACHE).create(service);
+        }
+        return (T) RetrofitManager.getInstant(context).serviceCache;
+    }
+
+    public static <T> T apiCallFromServerOrCache(Context context, final Class<T> service){
+        if(RetrofitManager.getInstant(context).serviceOrCache == null) {
+            RetrofitManager.getInstant(context).serviceOrCache =RetrofitManager.getInstant(context).apiCall(RetrofitManager.BASE_URL,RetrofitManager.FROM_SERVER_FIRST_CACHE_NEXT).create(service);
+        }
+        return (T) RetrofitManager.getInstant(context).serviceOrCache;
     }
 
 }
